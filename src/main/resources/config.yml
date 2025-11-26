@@ -1,0 +1,100 @@
+store_identifier: 411486491630370816
+
+tags_gui:
+  title: "my.store.net"
+  size: 18
+  tag_item:
+    name: "&e&l%tag%"
+    material: CHEST
+    slots: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+  checkout_item:
+    slot: 13
+    line_template: "&8- &7%item% &8&l(&2$%price%&8&l) &fx%amount%"
+    loading:
+      material: BARRIER
+      name: "&f&lCheckout"
+      lore: |-
+        &7Loading your cart...
+    empty:
+      material: MINECART
+      name: "&f&lCheckout"
+      lore: |-
+        &cYour cart is empty!
+    filled:
+      material: CHEST_MINECART
+      name: "&f&lCheckout"
+      lore: |-
+        %items%
+        &7Cart total: &a&l$%cartprice%
+        &eClick to check out on our website
+    filled_lunar:
+      material: CHEST_MINECART
+      name: "&f&lCheckout"
+      lore: |-
+        %items%
+        &7Cart total: &a&l$%cartprice%
+        &eLeft-click to check out with Lunar Client
+        &eRight-click to check out on our website
+  clear_cart_item: # Clicking this item will clear the cart
+    slots: "12,14"
+    material: BARRIER
+    name: "&c&lClear Cart"
+    lore: |-
+      &r
+      &7Clicking this will &c&lclear &7your cart!
+
+products_gui:
+  title: "%tag%"
+  item: # Material is gathered from 'products.yml'
+    material_max_quantity: BARRIER
+    lore: |-
+      &7Price &2&l$%price%
+      &7In cart: &e&l%amount%
+      &r
+      &7Left-Click to &a&ladd &7to your cart (+1)
+      &7Right-Click to &c&lremove &7from your cart (-1)
+      &7Shift Right-Click to &c&lremove all &7from your cart
+      &r
+      &8&o(Prices may vary when tax is applied)
+  back_item:
+    material: FEATHER
+    name: "&c&lBack"
+    lore: ""
+
+select_server_gui:
+  title: "Select server"
+  type: HOPPER # Interchangeable with 'slot: 9' etc...
+  items:
+    431510670974918656: # Use the gameServerID as the key
+      slot: 1
+      material: DIAMOND_SWORD
+      name: "&cSurvival"
+      lore: |-
+        &7Click to select the Survival server
+    431510670912004096:
+      slot: 2
+      material: GRASS_BLOCK
+      name: "&aSkyBlock"
+      lore: |-
+        &7Click to select the SkyBlock server
+    431510670744236032:
+      slot: 3
+      material: NETHERITE_AXE
+      name: "&bLifeSteal"
+      lore: |-
+        &7Click to select the LifeSteal server
+
+messages:
+  checkout_website: |
+    &f&m                                    &7
+    &aTo purchase your cart, click this link:
+    &9&n%link%
+    &f&m                                    &7
+  cart_unpurchased_login: |
+    &f&m                                    &7
+    &aDon't forget to check out with your cart:
+    &9&n%link%
+    &f&m                                    &7
+  wait: "&cPlease wait while we load the data..."
+  added_to_cart: "&a&l%item% &ahas been  added to your cart!"
+  removed_from_cart: "&c&l%item% &chas been  removed from your cart!"
