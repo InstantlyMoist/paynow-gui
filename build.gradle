@@ -48,6 +48,7 @@ java {
 
 bukkit {
     main = "me.kyllian.PayNowGUI.PayNowGUIPlugin"
+    name = "paynow-gui"
     apiVersion = "1.21.8"
     authors = ["Kyllian"]
     description = "Unofficial Spigot plugin for the PayNow API"

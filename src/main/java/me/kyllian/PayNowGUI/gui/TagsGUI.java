@@ -33,9 +33,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
             if (inventory == null) return;
             // Load products...
             if (this.payload.getAllProducts().isEmpty()) {
-                Bukkit.broadcastMessage("empty products");
                 plugin.getProductHandler().getProducts(player, (products) -> {
-                    Bukkit.broadcastMessage("prods " + products.size());
                     this.payload.getAllProducts().addAll(products);
                     products.forEach(p -> p.getTags().forEach(t -> {
                         if (this.payload.getAllTags().stream().noneMatch(existingTag -> existingTag.getId().equals(t.getId())))

@@ -1,5 +1,6 @@
 package me.kyllian.PayNowGUI.gui;
 
+import gg.paynow.sdk.storefront.model.ProductTagDto;
 import gg.paynow.sdk.storefront.model.StorefrontProductDto;
 import me.kyllian.PayNowGUI.PayNowGUIPlugin;
 import me.kyllian.PayNowGUI.models.GUIPayload;
@@ -15,17 +16,18 @@ public class SelectServerGUI extends BasicInventory<PayNowGUIPlugin> {
 
     private final Player player;
     private final GUIPayload payload;
+    private final ProductTagDto tag; // Used to navigate back
     private final StorefrontProductDto product;
 
     private boolean loading = false;
 
-    public SelectServerGUI(PayNowGUIPlugin plugin, Player player, GUIPayload payload, StorefrontProductDto product) {
+    public SelectServerGUI(PayNowGUIPlugin plugin, Player player, GUIPayload payload, ProductTagDto tag, StorefrontProductDto product) {
         super(plugin, plugin.getConfig(), "select_server_gui");
 
         this.player = player;
         this.payload = payload;
+        this.tag = tag;
         this.product = product;
-
     }
 
     @Override
@@ -40,7 +42,15 @@ public class SelectServerGUI extends BasicInventory<PayNowGUIPlugin> {
                     .toItemStack();
 
             addItem(itemSection.getInt("slot"), serverItem, e -> {
-                Bukkit.broadcastMessage("clicked " + server.getName());
+                if (loading) return;
+                loading = true;
+
+                plugin.getProductHandler().setProductQuantityInCart(player, server.getId(), product.getId(), 1, (nothing) -> {
+                    plugin.getProductHandler().getCart(player, (fetchedCart) -> {
+                        this.payload.setCart(fetchedCart);
+                        player.openInventory(new ProductsGUI(plugin, player, payload, tag).getInventory());
+                    }, null);
+                }, null);
             });
         });
     }

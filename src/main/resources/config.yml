@@ -65,24 +65,12 @@ select_server_gui:
   title: "Select server"
   type: HOPPER # Interchangeable with 'slot: 9' etc...
   items:
-    431510670974918656: # Use the gameServerID as the key
-      slot: 1
+    store_id: # Use the gameServerID as the key
+      slot: 0
       material: DIAMOND_SWORD
-      name: "&cSurvival"
+      name: "&cLorem Ipsum"
       lore: |-
-        &7Click to select the Survival server
-    431510670912004096:
-      slot: 2
-      material: GRASS_BLOCK
-      name: "&aSkyBlock"
-      lore: |-
-        &7Click to select the SkyBlock server
-    431510670744236032:
-      slot: 3
-      material: NETHERITE_AXE
-      name: "&bLifeSteal"
-      lore: |-
-        &7Click to select the LifeSteal server
+        &7Click to select the Lorem Ipsum server
 
 messages:
   checkout_website: |

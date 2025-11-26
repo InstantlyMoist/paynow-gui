@@ -87,10 +87,9 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
 
                 Object gameServerId = null;
                 if (product.getSingleGameServerOnly()) {
-                    Bukkit.broadcastMessage("single game server only!");
                     if (inCart == 0) {
                         loading = true;
-                        player.openInventory(new SelectServerGUI(plugin, player, payload, product).getInventory());
+                        player.openInventory(new SelectServerGUI(plugin, player, payload, tag, product).getInventory());
                         return;
                     }
                     // It's in cart, get the product in cart, and the game ID
