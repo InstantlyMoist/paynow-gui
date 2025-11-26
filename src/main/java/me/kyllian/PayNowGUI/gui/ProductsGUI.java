@@ -71,7 +71,6 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
             int inCart = productInCart != null ? productInCart.getQuantity() : 0;
 
             Material material = fullFilled ? Material.valueOf(getSection().getString("item.material_max_quantity")) : guiProduct.getMaterial();
-            if (!product.getSingleGameServerOnly()) material = Material.GOLD_BLOCK;
 
             ItemStack productItem = new ItemBuilder(material, Math.max(1, Math.min(inCart, material.getMaxStackSize())))
                     .setName(guiProduct.getDisplayName())
