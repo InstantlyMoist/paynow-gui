@@ -1,4 +1,8 @@
 store_identifier: 411486491630370816
+apollo_hook: true # Set to true to enable Lunar Client IFrame checkout support
+
+cancel_url: "https://kyllian.nl/discord"
+return_url: "https://kyllian.nl/discord" # After successful purchase, the user will be redirected here
 
 tags_gui:
   title: "my.store.net"
@@ -73,10 +77,12 @@ select_server_gui:
         &7Click to select the Lorem Ipsum server
 
 messages:
+  checkout_link: "&7[here]"
   checkout_website: |
     &f&m                                    &7
-    &aTo purchase your cart, click this link:
-    &9&n%link%
+    &r
+    &aTo purchase your cart, click %link%&a!
+    &r
     &f&m                                    &7
   cart_unpurchased_login: |
     &f&m                                    &7

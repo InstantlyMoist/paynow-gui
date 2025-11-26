@@ -5,6 +5,10 @@ import me.kyllian.PayNowGUI.PayNowGUIPlugin;
 import me.kyllian.PayNowGUI.models.GUIPayload;
 import me.kyllian.PayNowGUI.utils.BasicInventory;
 import me.kyllian.PayNowGUI.utils.ItemBuilder;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -114,7 +118,34 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                             .replace("%items%", items))
                     .toItemStack();
 
-            addItem(slot, filledCartItem);
+            addItem(slot, filledCartItem, e -> {
+                if (loading) {
+                    player.sendMessage(colorize(plugin.getConfig().getString("messages.wait")));
+                    return;
+                }
+                loading = true;
+
+                plugin.getProductHandler().createCheckout(player, (checkout) -> {
+                    player.closeInventory();
+                    String msg = plugin.getConfig().getString("messages.checkout_website");
+                    String[] parts = msg.split("%link%", -1);
+
+                    TextComponent messageComp = new TextComponent(colorize(parts.length > 0 ? parts[0] : ""));
+
+                    TextComponent linkComp = new TextComponent(colorize(getPlugin().getConfig().getString("messages.checkout_link")));
+                    linkComp.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, checkout.getUrl()));
+
+                    String hoverText = plugin.getConfig().getString("messages.checkout_hover", checkout.getUrl());
+                    linkComp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                            new ComponentBuilder(colorize(hoverText)).create()));
+
+                    messageComp.addExtra(linkComp);
+
+                    if (parts.length > 1) messageComp.addExtra(new TextComponent(colorize(parts[1])));
+
+                    player.spigot().sendMessage(messageComp);
+                }, null);
+            });
 
             // Clear cart item
             ItemStack clearCartItem = new ItemBuilder(Material.valueOf(getSection().getString("clear_cart_item.material")))

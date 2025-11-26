@@ -2,6 +2,7 @@ package me.kyllian.PayNowGUI.handlers;
 
 import gg.paynow.sdk.PayNowClient;
 import gg.paynow.sdk.storefront.api.CartApi;
+import gg.paynow.sdk.storefront.api.CheckoutApi;
 import gg.paynow.sdk.storefront.api.CustomerApi;
 import gg.paynow.sdk.storefront.api.ProductsApi;
 import gg.paynow.sdk.storefront.client.ApiException;
@@ -166,6 +167,30 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
             try {
                 cartApi.clearCart(player.getAddress().getHostName(), null);
                 consumeOnMain(successCallback, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                consumeOnMain(errorCallback, e);
+            }
+        });
+    }
+
+    public void createCheckout(Player player, Consumer<CreateCheckoutSessionResponseDto> successCallback, Consumer<Exception> errorCallback) {
+        if (!customerTokens.containsKey(player.getUniqueId())) {
+            consumeOnMain(errorCallback, new IllegalStateException("Player is not authenticated"));
+            return;
+        }
+
+        getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+            PayNowClient authenticatedClient = PayNowClient.forStorefrontWithAuth(storeId, "customer " + customerTokens.get(player.getUniqueId()));
+            CartApi cartApi = authenticatedClient.getStorefrontApi(CartApi.class);
+
+            try {
+                CreateCartCheckoutSessionDto request = new CreateCartCheckoutSessionDto()
+                        .returnUrl(getPlugin().getConfig().getString("return_url"))
+                        .cancelUrl(getPlugin().getConfig().getString("cancel_url"));
+
+                CreateCheckoutSessionResponseDto response = cartApi.createCartCheckout(player.getAddress().getHostName(), null, request);
+                consumeOnMain(successCallback, response);
             } catch (Exception e) {
                 e.printStackTrace();
                 consumeOnMain(errorCallback, e);

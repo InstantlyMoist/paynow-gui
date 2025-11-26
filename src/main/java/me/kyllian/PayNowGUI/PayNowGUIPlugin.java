@@ -40,7 +40,7 @@ public class PayNowGUIPlugin extends JavaPlugin {
     }
 
     private void initApolloHook() {
-        if (getServer().getPluginManager().getPlugin("Apollo-Bukkit") != null) {
+        if (getServer().getPluginManager().getPlugin("Apollo-Bukkit") != null && getConfig().getBoolean("apollo_hook")) {
             Bukkit.getLogger().info("[paynow-gui] Enabling Apollo-Bukkit hook!");
             apolloHook = new ApolloHook();
         } else {
