@@ -27,8 +27,6 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
     private final String storeId;
     private final PayNowClient client;
 
-    private final List<ProductTagDto> tags = new LinkedList<>();
-    private final List<StorefrontProductDto> products = new LinkedList<>();
     private final HashMap<Object, GUIProduct> guiProductMap = new HashMap<>(); // Map slot to GUIProduct (Display data)
 
     private final Map<UUID, String> customerTokens = new HashMap<>();
@@ -46,12 +44,11 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
     public void loadProducts() {
         try {
             ProductsApi productsApi = client.getStorefrontApi(ProductsApi.class);
-            this.products.addAll(productsApi.getStorefrontProducts(storeId, null, null, null, "en-US"));
+            List<StorefrontProductDto> products = new ArrayList<>(productsApi.getStorefrontProducts(storeId, null, null, null, "en-US"));
 
             guiProductMap.clear();
 
-            this.products.forEach(p -> {
-                // Upsert GUIProduct data
+            products.forEach(p -> {
                 if (getFileConfiguration().get(p.getId().toString()) != null) {
                     String displayName = getFileConfiguration().getString(p.getId().toString() + ".display_name", "&a" + p.getName());
                     String materialName = getFileConfiguration().getString(p.getId().toString() + ".material", "STONE");
@@ -64,17 +61,10 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
                     getFileConfiguration().set(p.getId().toString() + ".display_name", product.getDisplayName());
                     getFileConfiguration().set(p.getId().toString() + ".material", product.getMaterial().name());
                 }
-
-                p.getTags().forEach(t -> {
-                    if (this.tags.stream().noneMatch(existingTag -> existingTag.getId().equals(t.getId()))) {
-                        this.tags.add(t);
-                    }
-                });
-
             });
 
             save();
-            Bukkit.getLogger().info("[paynow-gui] Cached " + products.size() + " products and " + tags.size() + " tags.");
+            Bukkit.getLogger().info("[paynow-gui] Cached " + products.size() + " products");
         } catch (ApiException exception) {
             if (debug) exception.printStackTrace();
         }
