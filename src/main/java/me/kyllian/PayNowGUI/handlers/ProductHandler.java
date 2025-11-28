@@ -2,7 +2,6 @@ package me.kyllian.PayNowGUI.handlers;
 
 import gg.paynow.sdk.PayNowClient;
 import gg.paynow.sdk.storefront.api.CartApi;
-import gg.paynow.sdk.storefront.api.CheckoutApi;
 import gg.paynow.sdk.storefront.api.CustomerApi;
 import gg.paynow.sdk.storefront.api.ProductsApi;
 import gg.paynow.sdk.storefront.client.ApiException;
@@ -18,11 +17,13 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static me.kyllian.PayNowGUI.utils.StringUtils.colorize;
 import static org.bukkit.Bukkit.getScheduler;
 
 @Getter
 public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
 
+    private final boolean debug;
     private final String storeId;
     private final PayNowClient client;
 
@@ -34,6 +35,8 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
 
     public ProductHandler(PayNowGUIPlugin plugin) {
         super(plugin, "products.yml");
+
+        this.debug = plugin.getConfig().getBoolean("debug", false);
         this.storeId = plugin.getConfig().getString("store_identifier");
         this.client = PayNowClient.forStorefront(this.storeId);
 
@@ -73,33 +76,43 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
             save();
             Bukkit.getLogger().info("[paynow-gui] Cached " + products.size() + " products and " + tags.size() + " tags.");
         } catch (ApiException exception) {
-            exception.printStackTrace();
+            if (debug) exception.printStackTrace();
         }
     }
 
-    public void getProducts(Player player, Consumer<List<StorefrontProductDto>> successCallback, Consumer<Exception> errorCallback) {
-        if (!customerTokens.containsKey(player.getUniqueId())) {
-            consumeOnMain(errorCallback, new IllegalStateException("Player is not authenticated"));
+    @FunctionalInterface
+    private interface ThrowingFunction<T, R> {
+        R apply(T t) throws Exception;
+    }
+
+    private void runAsync(Runnable task) {
+        getScheduler().runTaskAsynchronously(getPlugin(), task);
+    }
+
+    private <T> void withAuth(Player player, ThrowingFunction<PayNowClient, T> task, Consumer<T> onSuccess) {
+        if (!hasToken(player)) {
+            error(player);
             return;
         }
-        getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            PayNowClient authenticatedClient = PayNowClient.forStorefrontWithAuth(storeId, "customer " + customerTokens.get(player.getUniqueId()));
-            ProductsApi productsApi = authenticatedClient.getStorefrontApi(ProductsApi.class);
+        runAsync(() -> {
             try {
-                List<StorefrontProductDto> products = productsApi.getStorefrontProducts(storeId, null, null, player.getAddress().getHostName(), "en-US");
-                consumeOnMain(successCallback, products);
+                PayNowClient authClient = PayNowClient.forStorefrontWithAuth(storeId, "customer " + customerTokens.get(player.getUniqueId()));
+                T result = task.apply(authClient);
+                consumeOnMain(onSuccess, result);
             } catch (Exception e) {
-                consumeOnMain(errorCallback, e);
+                error(player);
+                if (debug) e.printStackTrace();
             }
         });
     }
 
-    public void authenticate(Player player, Consumer<String> successCallback, Consumer<Exception> errorCallback) {
-        if (customerTokens.containsKey(player.getUniqueId())) {
-            consumeOnMain(successCallback, customerTokens.get(player.getUniqueId()));
-            return;
-        }
+    public void getProducts(Player player, Consumer<List<StorefrontProductDto>> successCallback) {
+        withAuth(player,
+                c -> c.getStorefrontApi(ProductsApi.class).getStorefrontProducts(storeId, null, null, player.getAddress().getHostName(), "en-US"),
+                successCallback);
+    }
 
+    public void authenticate(Player player, Consumer<String> successCallback) {
         getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             CustomerApi customerApi = client.getStorefrontApi(CustomerApi.class);
             try {
@@ -111,95 +124,58 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
                 customerTokens.put(player.getUniqueId(), response.getCustomerToken());
                 consumeOnMain(successCallback, response.getCustomerToken());
             } catch (Exception e) {
-                e.printStackTrace();
-                consumeOnMain(errorCallback, e);
+                error(player);
+                if (debug) e.printStackTrace();
             }
         });
     }
 
-    public void getCart(Player player, Consumer<CartDto> successCallback, Consumer<Exception> errorCallback) {
-        getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            PayNowClient authenticatedClient = PayNowClient.forStorefrontWithAuth(storeId, "customer " + customerTokens.get(player.getUniqueId()));
-            CartApi cartApi = authenticatedClient.getStorefrontApi(CartApi.class);
-            try {
-                CartDto cart = cartApi.getCart(null, player.getAddress().getHostName(), "en-US");
-                consumeOnMain(successCallback, cart);
-            } catch (Exception e) {
-                consumeOnMain(errorCallback, e);
-            }
-        });
+    public void getCart(Player player, Consumer<CartDto> successCallback) {
+        withAuth(player,
+                c -> c.getStorefrontApi(CartApi.class).getCart(null, player.getAddress().getHostName(), "en-US"),
+                successCallback);
     }
 
-    public void setProductQuantityInCart(Player player, Object gameServerId, Object productId, int quantity, Consumer<Void> successCallback, Consumer<Exception> errorCallback) {
-        if (!customerTokens.containsKey(player.getUniqueId())) {
-            consumeOnMain(errorCallback, new IllegalStateException("Player is not authenticated"));
-            return;
-        }
-
-        getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            PayNowClient authenticatedClient = PayNowClient.forStorefrontWithAuth(storeId, "customer " + customerTokens.get(player.getUniqueId()));
-            CartApi cartApi = authenticatedClient.getStorefrontApi(CartApi.class);
-            try {
-                HashMap<String, Object> prodIdMap = new HashMap<>();
-                prodIdMap.put("product_id", productId);
-
-                HashMap<String, Object> gameServerIdMap = new HashMap<>();
-                gameServerIdMap.put("gameserver_id", gameServerId);
-
-                cartApi.addLine(prodIdMap, quantity, null, null, gameServerIdMap, null, null, null, null, null, player.getAddress().getHostName(), null);
-                consumeOnMain(successCallback, null);
-            } catch (Exception e) {
-                e.printStackTrace();
-                consumeOnMain(errorCallback, e);
-            }
-        });
+    public void setProductQuantityInCart(Player player, Object gameServerId, Object productId, int quantity, Consumer<Void> successCallback) {
+        withAuth(player, c -> {
+            CartApi cartApi = c.getStorefrontApi(CartApi.class);
+            Map<String, Object> prodIdMap = Map.of("product_id", productId);
+            Map<String, Object> gameServerIdMap = (gameServerId == null) ? null : Map.of("gameserver_id", gameServerId);
+            cartApi.addLine(prodIdMap, quantity, null, null, gameServerIdMap, null, null, null, null, null, player.getAddress().getHostName(), null);
+            return null;
+        }, successCallback);
     }
 
-    public void clearCart(Player player, Consumer<Void> successCallback, Consumer<Exception> errorCallback) {
-        if (!customerTokens.containsKey(player.getUniqueId())) {
-            consumeOnMain(errorCallback, new IllegalStateException("Player is not authenticated"));
-            return;
-        }
-
-        getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            PayNowClient authenticatedClient = PayNowClient.forStorefrontWithAuth(storeId, "customer " + customerTokens.get(player.getUniqueId()));
-            CartApi cartApi = authenticatedClient.getStorefrontApi(CartApi.class);
-            try {
-                cartApi.clearCart(player.getAddress().getHostName(), null);
-                consumeOnMain(successCallback, null);
-            } catch (Exception e) {
-                e.printStackTrace();
-                consumeOnMain(errorCallback, e);
-            }
-        });
+    public void clearCart(Player player, Consumer<Void> successCallback) {
+        withAuth(player, c -> {
+            c.getStorefrontApi(CartApi.class).clearCart(player.getAddress().getHostName(), null);
+            return null;
+        }, successCallback);
     }
 
-    public void createCheckout(Player player, Consumer<CreateCheckoutSessionResponseDto> successCallback, Consumer<Exception> errorCallback) {
-        if (!customerTokens.containsKey(player.getUniqueId())) {
-            consumeOnMain(errorCallback, new IllegalStateException("Player is not authenticated"));
-            return;
-        }
+    public void createCheckout(Player player, Consumer<CreateCheckoutSessionResponseDto> successCallback) {
+        withAuth(player, c -> {
+            CreateCartCheckoutSessionDto request = new CreateCartCheckoutSessionDto()
+                    .returnUrl(getPlugin().getConfig().getString("return_url"))
+                    .cancelUrl(getPlugin().getConfig().getString("cancel_url"));
+            return c.getStorefrontApi(CartApi.class).createCartCheckout(player.getAddress().getHostName(), null, request);
+        }, successCallback);
+    }
 
-        getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            PayNowClient authenticatedClient = PayNowClient.forStorefrontWithAuth(storeId, "customer " + customerTokens.get(player.getUniqueId()));
-            CartApi cartApi = authenticatedClient.getStorefrontApi(CartApi.class);
-
-            try {
-                CreateCartCheckoutSessionDto request = new CreateCartCheckoutSessionDto()
-                        .returnUrl(getPlugin().getConfig().getString("return_url"))
-                        .cancelUrl(getPlugin().getConfig().getString("cancel_url"));
-
-                CreateCheckoutSessionResponseDto response = cartApi.createCartCheckout(player.getAddress().getHostName(), null, request);
-                consumeOnMain(successCallback, response);
-            } catch (Exception e) {
-                e.printStackTrace();
-                consumeOnMain(errorCallback, e);
-            }
-        });
+    private boolean hasToken(Player player) {
+        return player != null && customerTokens.containsKey(player.getUniqueId());
     }
 
     private <T> void consumeOnMain(Consumer<T> consumer, T param) {
         if (consumer == null) return;
         getScheduler().runTask(getPlugin(), () -> consumer.accept(param));
+    }
+
+    private void error(Player player) {
+        if (player == null || !player.isOnline()) return;
+        getScheduler().runTask(getPlugin(), () -> {
+            player.closeInventory();
+            player.sendMessage(colorize(getPlugin().getConfig().getString("messages.error")));
+        });
     }
 }

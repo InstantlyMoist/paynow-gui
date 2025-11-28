@@ -23,6 +23,6 @@ public class ApolloHook implements IApolloHook {
 
     @Override
     public void checkout(Player player, String baskedIdent) {
-        Bukkit.broadcastMessage("lunar checkout");
+        throw new IllegalStateException("You shouldn't be here yet!");
     }
 }

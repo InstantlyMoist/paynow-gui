@@ -6,7 +6,6 @@ import me.kyllian.PayNowGUI.PayNowGUIPlugin;
 import me.kyllian.PayNowGUI.models.GUIPayload;
 import me.kyllian.PayNowGUI.utils.BasicInventory;
 import me.kyllian.PayNowGUI.utils.ItemBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -41,7 +40,7 @@ public class SelectServerGUI extends BasicInventory<PayNowGUIPlugin> {
                     .setLore(itemSection.getString("lore"))
                     .toItemStack();
 
-            addItem(itemSection.getInt("slot"), serverItem, e -> {
+            addItem(itemSection.getInt("slot"), serverItem, event -> {
                 if (loading) return;
                 loading = true;
 
@@ -49,8 +48,8 @@ public class SelectServerGUI extends BasicInventory<PayNowGUIPlugin> {
                     plugin.getProductHandler().getCart(player, (fetchedCart) -> {
                         this.payload.setCart(fetchedCart);
                         player.openInventory(new ProductsGUI(plugin, player, payload, tag).getInventory());
-                    }, null);
-                }, null);
+                    });
+                });
             });
         });
     }

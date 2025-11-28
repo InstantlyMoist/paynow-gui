@@ -8,7 +8,6 @@ import me.kyllian.PayNowGUI.models.GUIPayload;
 import me.kyllian.PayNowGUI.models.GUIProduct;
 import me.kyllian.PayNowGUI.utils.BasicInventory;
 import me.kyllian.PayNowGUI.utils.ItemBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -112,8 +111,8 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
             plugin.getProductHandler().getCart(player, (fetchedCart) -> {
                 this.payload.setCart(fetchedCart);
                 player.openInventory(new ProductsGUI(plugin, player, payload, tag).getInventory());
-            }, null);
-        }, null);
+            });
+        });
     }
 
     @Override

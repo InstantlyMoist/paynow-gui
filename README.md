@@ -7,7 +7,9 @@ This project is **not** production ready yet!
 - [ ] Implement Lunar Checkout
 - [x] Implement checkout session creation + chat msg
 - [x] Implement server selection for multi-server products
-- [ ] Implement better error handling (Stuff is there, just doesn't handle anything)
+- [x] Implement better error handling (Stuff is there, just doesn't handle anything)
+- [ ] Implement recover-cart notification on join
+- [ ] Implement UI for 'missing required packages' state
 - [ ] ...
 
 To discuss this project, join my [Discord Server](https://kyllian.nl/discord)

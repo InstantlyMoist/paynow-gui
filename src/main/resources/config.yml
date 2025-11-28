@@ -1,3 +1,4 @@
+debug: false # Turn to 'true' when asked for debugging information
 store_identifier: 411486491630370816
 apollo_hook: true # Set to true to enable Lunar Client IFrame checkout support
 
@@ -77,18 +78,12 @@ select_server_gui:
         &7Click to select the Lorem Ipsum server
 
 messages:
+  error: "&cAn error occurred while trying to process your request. Please try again later."
   checkout_link: "&7[here]"
-  checkout_website: |
+  checkout_website: |-
     &f&m                                    &7
     &r
     &aTo purchase your cart, click %link%&a!
     &r
     &f&m                                    &7
-  cart_unpurchased_login: |
-    &f&m                                    &7
-    &aDon't forget to check out with your cart:
-    &9&n%link%
-    &f&m                                    &7
   wait: "&cPlease wait while we load the data..."
-  added_to_cart: "&a&l%item% &ahas been  added to your cart!"
-  removed_from_cart: "&c&l%item% &chas been  removed from your cart!"

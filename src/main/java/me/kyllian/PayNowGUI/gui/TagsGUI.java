@@ -44,15 +44,15 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                             this.payload.getAllTags().add(t);
                     }));
                     drawProducts();
-                }, null);
+                });
             } else drawProducts();
 
             plugin.getProductHandler().getCart(player, (fetchedCart) -> {
                 if (inventory == null) return;
                 this.payload.setCart(fetchedCart);
                 drawCart();
-            }, null);
-        }, null);
+            });
+        });
     }
 
     @Override
@@ -118,7 +118,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                             .replace("%items%", items))
                     .toItemStack();
 
-            addItem(slot, filledCartItem, e -> {
+            addItem(slot, filledCartItem, event -> {
                 if (loading) {
                     player.sendMessage(colorize(plugin.getConfig().getString("messages.wait")));
                     return;
@@ -144,7 +144,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                     if (parts.length > 1) messageComp.addExtra(new TextComponent(colorize(parts[1])));
 
                     player.spigot().sendMessage(messageComp);
-                }, null);
+                });
             });
 
             // Clear cart item
@@ -153,7 +153,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                     .setLore(getSection().getString("clear_cart_item.lore"))
                     .toItemStack();
 
-            addItem(getSlots(getSection().getString("clear_cart_item.slots", "0")), clearCartItem, (e) -> {
+            addItem(getSlots(getSection().getString("clear_cart_item.slots", "0")), clearCartItem, (event) -> {
                 if (loading) {
                     player.sendMessage(colorize(plugin.getConfig().getString("messages.wait")));
                     return;
@@ -163,7 +163,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                     if (inventory == null) return;
                     payload.getCart().getLines().clear();
                     player.openInventory(new TagsGUI(plugin, player, payload).getInventory());
-                }, null);
+                });
             });
         }
     }
