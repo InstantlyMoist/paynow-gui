@@ -73,6 +73,7 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
 
             ItemStack productItem = new ItemBuilder(material, Math.max(1, Math.min(inCart, material.getMaxStackSize())))
                     .setName(guiProduct.getDisplayName())
+                    .setCustomModelData(guiProduct.getCustomModelData())
                     .setLore(getSection().getString("item.lore")
                             .replace("%price%", String.format("%.2f", product.getPrice() / 100.0))
                             .replace("%amount%", String.valueOf(inCart))

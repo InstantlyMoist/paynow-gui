@@ -52,7 +52,8 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
                 if (getFileConfiguration().get(p.getId().toString()) != null) {
                     String displayName = getFileConfiguration().getString(p.getId().toString() + ".display_name", "&a" + p.getName());
                     String materialName = getFileConfiguration().getString(p.getId().toString() + ".material", "STONE");
-                    GUIProduct guiProduct = new GUIProduct(displayName, Material.valueOf(materialName));
+                    int customModelData = getFileConfiguration().getInt(p.getId().toString() + ".custom_model_data", 0);
+                    GUIProduct guiProduct = new GUIProduct(displayName, Material.valueOf(materialName), customModelData);
                     guiProductMap.put(p.getId(), guiProduct);
                 } else {
                     GUIProduct product = new GUIProduct(p);
@@ -129,9 +130,7 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
     public void setProductQuantityInCart(Player player, Object gameServerId, Object productId, int quantity, Consumer<Void> successCallback) {
         withAuth(player, c -> {
             CartApi cartApi = c.getStorefrontApi(CartApi.class);
-            Map<String, Object> prodIdMap = Map.of("product_id", productId);
-            Map<String, Object> gameServerIdMap = (gameServerId == null) ? null : Map.of("gameserver_id", gameServerId);
-            cartApi.addLine(prodIdMap, quantity, null, null, gameServerIdMap, null, null, null, null, null, player.getAddress().getHostName(), null);
+            cartApi.addLine(productId.toString(), quantity, null, null, gameServerId != null ? gameServerId.toString() : null, null, null, null, null, null, player.getAddress().getHostName(), null);
             return null;
         }, successCallback);
     }

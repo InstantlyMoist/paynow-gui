@@ -88,6 +88,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
             ItemStack loadingItem = new ItemBuilder(Material.valueOf(getSection().getString("checkout_item.loading.material")))
                     .setName(getSection().getString("checkout_item.loading.name"))
                     .setLore(getSection().getString("checkout_item.loading.lore"))
+                    .setCustomModelData(getSection().getInt("checkout_item.loading.custom_model_data", 0))
                     .toItemStack();
 
             addItem(slot, loadingItem);
@@ -95,6 +96,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
             ItemStack emptyCartItem = new ItemBuilder(Material.valueOf(getSection().getString("checkout_item.empty.material")))
                     .setName(getSection().getString("checkout_item.empty.name"))
                     .setLore(getSection().getString("checkout_item.empty.lore"))
+                    .setCustomModelData(getSection().getInt("checkout_item.empty.custom_model_data", 0))
                     .toItemStack();
 
             addItem(slot, emptyCartItem);
@@ -113,6 +115,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
 
             ItemStack filledCartItem = new ItemBuilder(Material.valueOf(getSection().getString("checkout_item.filled.material")))
                     .setName(getSection().getString("checkout_item.filled.name"))
+                    .setCustomModelData(getSection().getInt("checkout_item.filled.custom_model_data", 0))
                     .setLore(getSection().getString("checkout_item.filled.lore")
                             .replace("%cartprice%", String. format("%.2f", payload.getCart().getTotal() / 100.0))
                             .replace("%items%", items))
@@ -151,6 +154,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
             ItemStack clearCartItem = new ItemBuilder(Material.valueOf(getSection().getString("clear_cart_item.material")))
                     .setName(getSection().getString("clear_cart_item.name"))
                     .setLore(getSection().getString("clear_cart_item.lore"))
+                    .setCustomModelData(getSection().getInt("clear_cart_item.custom_model_data", 0))
                     .toItemStack();
 
             addItem(getSlots(getSection().getString("clear_cart_item.slots", "0")), clearCartItem, (event) -> {

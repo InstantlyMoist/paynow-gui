@@ -49,6 +49,14 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder setCustomModelData(int data) {
+        if (data == 0) return this;
+        ItemMeta im = this.itemStack.getItemMeta();
+        im.setCustomModelData(data);
+        this.itemStack.setItemMeta(im);
+        return this;
+    }
+
     public ItemBuilder addUnsafeEnchantment(Enchantment ench, int level) {
         this.itemStack.addUnsafeEnchantment(ench, level);
         return this;
