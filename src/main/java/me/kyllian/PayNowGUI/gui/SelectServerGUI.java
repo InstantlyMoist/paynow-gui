@@ -44,7 +44,7 @@ public class SelectServerGUI extends BasicInventory<PayNowGUIPlugin> {
                 if (loading) return;
                 loading = true;
 
-                plugin.getProductHandler().setProductQuantityInCart(player, server.getId(), product.getId(), 1, (nothing) -> {
+                plugin.getProductHandler().setProductQuantityInCart(player, server.getId(), product.getId(), 1, 1, (nothing) -> {
                     plugin.getProductHandler().getCart(player, (fetchedCart) -> {
                         this.payload.setCart(fetchedCart);
                         player.openInventory(new ProductsGUI(plugin, player, payload, tag).getInventory());

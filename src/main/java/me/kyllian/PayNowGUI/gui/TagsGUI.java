@@ -5,13 +5,14 @@ import me.kyllian.PayNowGUI.PayNowGUIPlugin;
 import me.kyllian.PayNowGUI.models.GUIPayload;
 import me.kyllian.PayNowGUI.utils.BasicInventory;
 import me.kyllian.PayNowGUI.utils.ItemBuilder;
+import me.kyllian.PayNowGUI.utils.Statistics;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -113,10 +114,11 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
 
             String items = itemsBuilder.toString().trim();
 
-            ItemStack filledCartItem = new ItemBuilder(Material.valueOf(getSection().getString("checkout_item.filled.material")))
-                    .setName(getSection().getString("checkout_item.filled.name"))
-                    .setCustomModelData(getSection().getInt("checkout_item.filled.custom_model_data", 0))
-                    .setLore(getSection().getString("checkout_item.filled.lore")
+            String basePath = isLunar ? "checkout_item.filled_lunar." : "checkout_item.filled.";
+            ItemStack filledCartItem = new ItemBuilder(Material.valueOf(getSection().getString( basePath + "material")))
+                    .setName(getSection().getString(basePath + "name"))
+                    .setCustomModelData(getSection().getInt(basePath + "custom_model_data", 0))
+                    .setLore(getSection().getString(basePath + "lore")
                             .replace("%cartprice%", String. format("%.2f", payload.getCart().getTotal() / 100.0))
                             .replace("%items%", items))
                     .toItemStack();
@@ -130,6 +132,14 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
 
                 plugin.getProductHandler().createCheckout(player, (checkout) -> {
                     player.closeInventory();
+
+                    if (isLunar && event.getClick() != ClickType.RIGHT) { // case: user wants to open link manually
+                        plugin.getApolloHook().checkout(player, checkout.getToken());
+                        Statistics.lunarCartsOpened++;
+                        return;
+                    }
+                    Statistics.cartsOpened++;
+
                     String msg = plugin.getConfig().getString("messages.checkout_website");
                     String[] parts = msg.split("%link%", -1);
 
@@ -165,6 +175,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                 loading = true;
                 plugin.getProductHandler().clearCart(player, (nothing) -> {
                     if (inventory == null) return;
+                    Statistics.cartsCleared++;
                     payload.getCart().getLines().clear();
                     player.openInventory(new TagsGUI(plugin, player, payload).getInventory());
                 });

@@ -9,6 +9,7 @@ import gg.paynow.sdk.storefront.model.*;
 import lombok.Getter;
 import me.kyllian.PayNowGUI.PayNowGUIPlugin;
 import me.kyllian.PayNowGUI.models.GUIProduct;
+import me.kyllian.PayNowGUI.utils.Statistics;
 import me.kyllian.PayNowGUI.utils.YMLFile;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static me.kyllian.PayNowGUI.utils.StringUtils.colorize;
 import static org.bukkit.Bukkit.getScheduler;
@@ -63,6 +65,12 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
                     getFileConfiguration().set(p.getId().toString() + ".material", product.getMaterial().name());
                 }
             });
+
+            Statistics.products = products.size();
+            Statistics.tags = products.stream()
+                    .flatMap(p -> p.getTags().stream())
+                    .collect(Collectors.toSet())
+                    .size();
 
             save();
             Bukkit.getLogger().info("[paynow-gui] Cached " + products.size() + " products");
@@ -127,7 +135,10 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
                 successCallback);
     }
 
-    public void setProductQuantityInCart(Player player, Object gameServerId, Object productId, int quantity, Consumer<Void> successCallback) {
+    public void setProductQuantityInCart(Player player, Object gameServerId, Object productId, int quantity, int delta, Consumer<Void> successCallback) {
+        if (delta < 0) Statistics.productsRemoved += Math.abs(delta);
+        else Statistics.productsAdded += delta;
+
         withAuth(player, c -> {
             CartApi cartApi = c.getStorefrontApi(CartApi.class);
             cartApi.addLine(productId.toString(), quantity, null, null, gameServerId != null ? gameServerId.toString() : null, null, null, null, null, null, player.getAddress().getHostName(), null);

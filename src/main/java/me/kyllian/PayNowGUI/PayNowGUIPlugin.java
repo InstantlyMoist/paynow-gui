@@ -7,6 +7,9 @@ import me.kyllian.PayNowGUI.hooks.apollo.ApolloHook;
 import me.kyllian.PayNowGUI.hooks.apollo.IApolloHook;
 import me.kyllian.PayNowGUI.hooks.apollo.NoopApolloHook;
 import me.kyllian.PayNowGUI.listeners.PlayerLoginListener;
+import me.kyllian.PayNowGUI.utils.Statistics;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +32,7 @@ public class PayNowGUIPlugin extends JavaPlugin {
         initExecutors();
         initHandlers();
         initApolloHook();
+        initMetrics();
     }
 
     private void initExecutors() {
@@ -47,5 +51,20 @@ public class PayNowGUIPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[paynow-gui] Apollo-Bukkit not detected!");
             apolloHook = new NoopApolloHook();
         }
+    }
+
+    private void initMetrics() {
+        Metrics metrics = new Metrics(this, 28393);
+
+        metrics.addCustomChart(new SingleLineChart("totalProducts", () -> Statistics.products));
+        metrics.addCustomChart(new SingleLineChart("totalTags", () -> Statistics.tags));
+
+        metrics.addCustomChart(new SingleLineChart("menuOpened", () -> Statistics.menuOpened));
+        metrics.addCustomChart(new SingleLineChart("cartsOpened", () -> Statistics.cartsOpened));
+        metrics.addCustomChart(new SingleLineChart("lunarCartsOpened", () -> Statistics.lunarCartsOpened));
+
+        metrics.addCustomChart(new SingleLineChart("cartsCleared", () -> Statistics.cartsCleared));
+        metrics.addCustomChart(new SingleLineChart("productsAdded", () -> Statistics.productsAdded));
+        metrics.addCustomChart(new SingleLineChart("productsRemoved", () -> Statistics.productsRemoved));
     }
 }

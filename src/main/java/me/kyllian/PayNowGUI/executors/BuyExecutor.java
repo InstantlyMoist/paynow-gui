@@ -3,6 +3,7 @@ package me.kyllian.PayNowGUI.executors;
 import me.kyllian.PayNowGUI.PayNowGUIPlugin;
 import me.kyllian.PayNowGUI.gui.TagsGUI;
 import me.kyllian.PayNowGUI.models.GUIPayload;
+import me.kyllian.PayNowGUI.utils.Statistics;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,6 +27,7 @@ public class BuyExecutor implements CommandExecutor {
             return true;
         }
 
+        Statistics.menuOpened++;
         player.openInventory(new TagsGUI(plugin, player, new GUIPayload()).getInventory());
         return true;
     }

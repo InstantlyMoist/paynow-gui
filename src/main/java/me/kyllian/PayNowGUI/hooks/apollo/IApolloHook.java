@@ -5,6 +5,6 @@ import org.bukkit.entity.Player;
 public interface IApolloHook {
 
     boolean isLunar(Player player);
-    void checkout(Player player, String ident);
+    void checkout(Player player, String checkoutToken);
 
 }

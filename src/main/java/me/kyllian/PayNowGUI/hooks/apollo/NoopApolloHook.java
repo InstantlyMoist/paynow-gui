@@ -10,5 +10,5 @@ public class NoopApolloHook implements IApolloHook {
     }
 
     @Override
-    public void checkout(Player player, String baskedIdent) {}
+    public void checkout(Player player, String checkoutToken) {}
 }

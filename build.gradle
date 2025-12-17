@@ -26,11 +26,12 @@ dependencies {
     compileOnly('org.spigotmc:spigot-api:1.21.8-R0.1-SNAPSHOT')
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
-    compileOnly 'com.lunarclient:apollo-api:1.2.0'
-    compileOnly 'com.lunarclient:apollo-extra-adventure4:1.2.0'
+    compileOnly 'com.lunarclient:apollo-api:1.2.1'
+    compileOnly 'com.lunarclient:apollo-extra-adventure4:1.2.1'
     compileOnly("com.squareup.okhttp3:okhttp:5.2.1")
     compileOnly("com.squareup.okhttp3:logging-interceptor:5.2.1")
-    
+
+    implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation 'gg.paynow:java-sdk:1.0.34'
 }
 
@@ -71,10 +72,12 @@ shadowJar {
     dependencies {
         include(dependency('gg.paynow:java-sdk:.*'))
         include(dependency('io.gsonfire:gson-fire:.*'))
+        include(dependency('org.bstats:.*'))
     }
     
     // relocate external package to avoid classpath conflicts
     relocate 'gg.paynow', 'me.kyllian.shaded.paynow'
+    relocate 'org.bstats', 'me.kyllian.shaded.bstats'
     
     // exclude unnecessary files to reduce size
     exclude 'META-INF/*.SF'

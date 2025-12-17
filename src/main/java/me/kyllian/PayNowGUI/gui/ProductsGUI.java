@@ -99,16 +99,16 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
                     gameServerId = line != null ? line.getSelectedGameserverId() : null;
                 }
 
-                if (e.getClick() == ClickType.LEFT && !fullFilled) setQuantity(product, inCart + 1, gameServerId);
-                else if (e.getClick() == ClickType.SHIFT_RIGHT && inCart != 0) setQuantity(product, 0, gameServerId);
-                else if (e.getClick() == ClickType.RIGHT && inCart != 0) setQuantity(product, inCart - 1, gameServerId);
+                if (e.getClick() == ClickType.LEFT && !fullFilled) setQuantity(product, inCart + 1, gameServerId, 1);
+                else if (e.getClick() == ClickType.SHIFT_RIGHT && inCart != 0) setQuantity(product, 0, gameServerId, -inCart);
+                else if (e.getClick() == ClickType.RIGHT && inCart != 0) setQuantity(product, inCart - 1, gameServerId, -1);
             });
         }
     }
 
-    private void setQuantity(StorefrontProductDto product, int quantity, Object gameServerId) {
+    private void setQuantity(StorefrontProductDto product, int quantity, Object gameServerId, int delta) {
         loading = true;
-        plugin.getProductHandler().setProductQuantityInCart(player, gameServerId, product.getId(), quantity, (nothing) -> {
+        plugin.getProductHandler().setProductQuantityInCart(player, gameServerId, product.getId(), quantity, delta, (nothing) -> {
             plugin.getProductHandler().getCart(player, (fetchedCart) -> {
                 this.payload.setCart(fetchedCart);
                 player.openInventory(new ProductsGUI(plugin, player, payload, tag).getInventory());
