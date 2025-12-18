@@ -68,9 +68,20 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
             int slot = slots.get(i);
             ProductTagDto tag = payload.getAllTags().get(i);
 
-            ItemStack tagItem = new ItemBuilder(Material.valueOf(getSection().getString("tag_item.material")))
-                    .setName(getSection().getString("tag_item.name").replace("%tag%", tag.getName()))
-                    .toItemStack();
+            ItemStack tagItem;
+            if (getSection().get("tag_item.overrides." + tag.getId()) != null) {
+                String basePath = "tag_item.overrides." + tag.getId() + ".";
+                tagItem = new ItemBuilder(Material.valueOf(getSection().getString(basePath + "material")))
+                        .setName(getSection().getString(basePath + "name").replace("%tag%", tag.getName()))
+                        .setLore(getSection().getString(basePath + "lore"))
+                        .setCustomModelData(getSection().getInt(basePath + "custom_model_data", 0))
+                        .toItemStack();
+            } else {
+                tagItem = new ItemBuilder(Material.valueOf(getSection().getString("tag_item.material")))
+                        .setName(getSection().getString("tag_item.name").replace("%tag%", tag.getName()))
+                        .setCustomModelData(getSection().getInt("tag_item.custom_model_data", 0))
+                        .toItemStack();
+            }
 
             addItem(slot, tagItem, (e) -> {
                 if (payload.getAllProducts().isEmpty() || payload.getCart() == null) {

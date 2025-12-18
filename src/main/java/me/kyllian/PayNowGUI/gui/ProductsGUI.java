@@ -47,6 +47,8 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
 
     @Override
     public int getSlots() {
+        int size = getSection().getInt("size", 0);
+        if (size != 0) return size;
         return ((products.size() - 1) / 9 + 1) * 9 + 9;
     }
 
