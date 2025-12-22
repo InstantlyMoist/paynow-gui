@@ -136,8 +136,8 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
     }
 
     public void setProductQuantityInCart(Player player, Object gameServerId, Object productId, int quantity, int delta, Consumer<Void> successCallback) {
-        if (delta < 0) Statistics.productsRemoved += Math.abs(delta);
-        else Statistics.productsAdded += delta;
+        if (delta < 0) Statistics.productsRemoved.getAndAdd(Math.abs(delta));
+        else Statistics.productsAdded.getAndAdd(delta);
 
         withAuth(player, c -> {
             CartApi cartApi = c.getStorefrontApi(CartApi.class);

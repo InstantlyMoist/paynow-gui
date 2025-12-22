@@ -27,7 +27,7 @@ public class BuyExecutor implements CommandExecutor {
             return true;
         }
 
-        Statistics.menuOpened++;
+        Statistics.menuOpened.getAndIncrement();
         player.openInventory(new TagsGUI(plugin, player, new GUIPayload()).getInventory());
         return true;
     }

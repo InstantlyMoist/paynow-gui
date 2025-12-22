@@ -146,10 +146,10 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
 
                     if (isLunar && event.getClick() != ClickType.RIGHT) { // case: user wants to open link manually
                         plugin.getApolloHook().checkout(player, checkout.getToken());
-                        Statistics.lunarCartsOpened++;
+                        Statistics.lunarCartsOpened.getAndIncrement();
                         return;
                     }
-                    Statistics.cartsOpened++;
+                    Statistics.cartsOpened.getAndIncrement();
 
                     String msg = plugin.getConfig().getString("messages.checkout_website");
                     String[] parts = msg.split("%link%", -1);
@@ -186,7 +186,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                 loading = true;
                 plugin.getProductHandler().clearCart(player, (nothing) -> {
                     if (inventory == null) return;
-                    Statistics.cartsCleared++;
+                    Statistics.cartsCleared.getAndIncrement();
                     payload.getCart().getLines().clear();
                     player.openInventory(new TagsGUI(plugin, player, payload).getInventory());
                 });
