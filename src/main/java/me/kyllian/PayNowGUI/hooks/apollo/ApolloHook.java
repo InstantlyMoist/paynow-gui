@@ -4,7 +4,6 @@ import com.lunarclient.apollo.Apollo;
 import com.lunarclient.apollo.module.paynow.PayNowEmbeddedCheckoutSupport;
 import com.lunarclient.apollo.module.paynow.PayNowModule;
 import com.lunarclient.apollo.player.ApolloPlayerManager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;

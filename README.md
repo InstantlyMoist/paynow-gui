@@ -4,7 +4,7 @@ A simple GUI for spigot servers, using [paynow-gg-java-sdk](https://github.com/I
 This project is **not** production ready yet!
 
 ## To-do list
-- [ ] Implement Lunar Checkout
+- [x] Implement Lunar Checkout
 - [x] Implement checkout session creation + chat msg
 - [x] Implement server selection for multi-server products
 - [x] Implement better error handling (Stuff is there, just doesn't handle anything)

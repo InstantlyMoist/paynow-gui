@@ -13,6 +13,8 @@ import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import static me.kyllian.PayNowGUI.utils.Statistics.getAndReset;
+
 @Getter
 public class PayNowGUIPlugin extends JavaPlugin {
 
@@ -59,12 +61,12 @@ public class PayNowGUIPlugin extends JavaPlugin {
         metrics.addCustomChart(new SingleLineChart("totalProducts", () -> Statistics.products));
         metrics.addCustomChart(new SingleLineChart("totalTags", () -> Statistics.tags));
 
-        metrics.addCustomChart(new SingleLineChart("menuOpened", () -> Statistics.menuOpened));
-        metrics.addCustomChart(new SingleLineChart("cartsOpened", () -> Statistics.cartsOpened));
-        metrics.addCustomChart(new SingleLineChart("lunarCartsOpened", () -> Statistics.lunarCartsOpened));
+        metrics.addCustomChart(new SingleLineChart("menuOpened", () -> getAndReset(Statistics.menuOpened)));
+        metrics.addCustomChart(new SingleLineChart("cartsOpened", () -> getAndReset(Statistics.cartsOpened)));
+        metrics.addCustomChart(new SingleLineChart("lunarCartsOpened", () -> getAndReset(Statistics.lunarCartsOpened)));
 
-        metrics.addCustomChart(new SingleLineChart("cartsCleared", () -> Statistics.cartsCleared));
-        metrics.addCustomChart(new SingleLineChart("productsAdded", () -> Statistics.productsAdded));
-        metrics.addCustomChart(new SingleLineChart("productsRemoved", () -> Statistics.productsRemoved));
+        metrics.addCustomChart(new SingleLineChart("cartsCleared", () -> getAndReset(Statistics.cartsCleared)));
+        metrics.addCustomChart(new SingleLineChart("productsAdded", () -> getAndReset(Statistics.productsAdded)));
+        metrics.addCustomChart(new SingleLineChart("productsRemoved", () -> getAndReset(Statistics.productsRemoved)));
     }
 }
