@@ -25,9 +25,9 @@ import static org.bukkit.Bukkit.getScheduler;
 @Getter
 public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
 
-    private final boolean debug;
-    private final String storeId;
-    private final PayNowClient client;
+    private boolean debug;
+    private String storeId;
+    private PayNowClient client;
 
     private final HashMap<Object, GUIProduct> guiProductMap = new HashMap<>(); // Map slot to GUIProduct (Display data)
 
@@ -36,14 +36,14 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
     public ProductHandler(PayNowGUIPlugin plugin) {
         super(plugin, "products.yml");
 
-        this.debug = plugin.getConfig().getBoolean("debug", false);
-        this.storeId = plugin.getConfig().getString("store_identifier");
-        this.client = PayNowClient.forStorefront(this.storeId);
-
         loadProducts();
     }
 
     public void loadProducts() {
+        this.debug = getPlugin().getConfig().getBoolean("debug", false);
+        this.storeId = getPlugin().getConfig().getString("store_identifier");
+        this.client = PayNowClient.forStorefront(this.storeId);
+
         try {
             ProductsApi productsApi = client.getStorefrontApi(ProductsApi.class);
             List<StorefrontProductDto> products = new ArrayList<>(productsApi.getStorefrontProducts(storeId, null, null, null, "en-US"));

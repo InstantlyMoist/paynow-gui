@@ -22,6 +22,16 @@ public class BuyExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
+        if (args.length != 0) {
+            if (args[0].equalsIgnoreCase("reload") && commandSender.hasPermission("paynowgui.reload")) {
+                plugin.reloadConfig();
+                plugin.initApolloHook(); // Attempt reload hook for config change
+                plugin.getProductHandler().reload();
+                plugin.getProductHandler().loadProducts();
+                commandSender.sendMessage(ChatColor.GREEN + "paynow-gui configuration reloaded!");
+                return true;
+            }
+        }
         if (!(commandSender instanceof Player player)) {
             commandSender.sendMessage(ChatColor.RED + "You need to be a player to execute this command!");
             return true;
