@@ -20,6 +20,10 @@ repositories {
         name = 'lunarclient'
         url = 'https://repo.lunarclient.dev'
     }
+    maven {
+        name = 'citizens'
+        url = 'https://repo.citizensnpcs.co/'
+    }
 }
 
 dependencies {
@@ -28,11 +32,13 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     compileOnly 'com.lunarclient:apollo-api:1.2.1'
     compileOnly 'com.lunarclient:apollo-extra-adventure4:1.2.1'
+    compileOnly 'net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT'
     implementation("com.squareup.okhttp3:okhttp:5.2.1")
     implementation("com.squareup.okhttp3:logging-interceptor:5.2.1")
 
     implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation 'com.github.InstantlyMoist:paynow-gg-java-sdk:1.0.56'
+//    implementation 'com.github.InstantlyMoist:paynow-gg-java-sdk:1.0.60'
+    implementation 'gg.paynow:java-sdk:1.0.60'
 }
 
 compileJava {
@@ -54,7 +60,7 @@ bukkit {
     authors = ["Kyllian"]
     description = "Unofficial Spigot plugin for the PayNow API"
 
-    softDepend = [ "Apollo-Bukkit" ]
+    softDepend = [ "Apollo-Bukkit", "Citizens" ]
 
     commands {
         buy {

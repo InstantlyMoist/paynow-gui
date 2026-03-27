@@ -3,9 +3,13 @@ package me.kyllian.PayNowGUI;
 import lombok.Getter;
 import me.kyllian.PayNowGUI.executors.BuyExecutor;
 import me.kyllian.PayNowGUI.handlers.ProductHandler;
+import me.kyllian.PayNowGUI.handlers.RecentDonatorHandler;
 import me.kyllian.PayNowGUI.hooks.apollo.ApolloHook;
 import me.kyllian.PayNowGUI.hooks.apollo.IApolloHook;
 import me.kyllian.PayNowGUI.hooks.apollo.NoopApolloHook;
+import me.kyllian.PayNowGUI.hooks.npc.CitizensNpcHook;
+import me.kyllian.PayNowGUI.hooks.npc.INpcHook;
+import me.kyllian.PayNowGUI.hooks.npc.NoopNpcHook;
 import me.kyllian.PayNowGUI.listeners.PlayerLoginListener;
 import me.kyllian.PayNowGUI.utils.Statistics;
 import org.bstats.bukkit.Metrics;
@@ -19,8 +23,10 @@ import static me.kyllian.PayNowGUI.utils.Statistics.getAndReset;
 public class PayNowGUIPlugin extends JavaPlugin {
 
     private IApolloHook apolloHook;
+    private INpcHook npcHook;
 
     private ProductHandler productHandler;
+    private RecentDonatorHandler recentDonatorHandler;
 
     @Override
     public void onEnable() {
@@ -34,6 +40,7 @@ public class PayNowGUIPlugin extends JavaPlugin {
         initExecutors();
         initHandlers();
         initApolloHook();
+        initNpcHook();
         initMetrics();
     }
 
@@ -53,6 +60,17 @@ public class PayNowGUIPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[paynow-gui] Apollo-Bukkit not detected!");
             apolloHook = new NoopApolloHook();
         }
+    }
+
+    public void initNpcHook() {
+        if (getServer().getPluginManager().getPlugin("Citizens") != null && getConfig().getBoolean("recent_donator_npc.enabled")) {
+            Bukkit.getLogger().info("[paynow-gui] Enabling Citizens NPC hook!");
+            npcHook = new CitizensNpcHook();
+        } else {
+            Bukkit.getLogger().info("[paynow-gui] Citizens not detected or recent_donator_npc disabled!");
+            npcHook = new NoopNpcHook();
+        }
+        recentDonatorHandler = new RecentDonatorHandler(this, npcHook);
     }
 
     private void initMetrics() {

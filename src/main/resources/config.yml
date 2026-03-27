@@ -5,6 +5,16 @@ apollo_hook: true # Set to true to enable Lunar Client IFrame checkout support
 cancel_url: "https://kyllian.nl/discord"
 return_url: "https://kyllian.nl/discord" # After successful purchase, the user will be redirected here
 
+recent_donator_npc:
+  enabled: false
+  hologram: |-
+    &d&lMOST RECENT DONATOR
+    %packages%
+    &e&l%name% &7(&a&l%total%&7)
+  package_format: "&8- &7%name% &d&l%amount%"
+  update_every: 60 # Seconds
+  npc_id: 99 # ID of the NPC
+
 tags_gui:
   title: "my.store.net"
   size: 18
