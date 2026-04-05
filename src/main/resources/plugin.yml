@@ -1,0 +1,14 @@
+name: paynow-gui
+version: ${version}
+main: me.kyllian.PayNowGUI.PayNowGUIPlugin
+api-version: '1.21.8'
+authors:
+  - Kyllian
+description: Unofficial Spigot plugin for the PayNow API
+softdepend:
+  - Apollo-Bukkit
+  - Citizens
+folia-supported: true
+commands:
+  buy:
+    usage: /<command>
