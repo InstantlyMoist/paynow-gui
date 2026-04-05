@@ -1,0 +1,98 @@
+plugins {
+    id 'com.gradleup.shadow'
+    id 'de.eldoria.plugin-yml.bukkit' version '0.8.0'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://repo.opencollab.dev/main/' }
+    maven { url = "https://hub.spigotmc.org/nexus/content/groups/public/" }
+    maven {
+        name = 'lunarclient'
+        url = 'https://repo.lunarclient.dev'
+    }
+    maven {
+        name = 'citizens'
+        url = 'https://repo.citizensnpcs.co/'
+    }
+}
+
+dependencies {
+    implementation project(':core')
+
+    compileOnly('org.spigotmc:spigot-api:1.21.8-R0.1-SNAPSHOT')
+    compileOnly 'com.lunarclient:apollo-api:1.2.4'
+    compileOnly 'com.lunarclient:apollo-extra-adventure4:1.2.4'
+    compileOnly 'net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT'
+
+    implementation 'org.bstats:bstats-bukkit:3.1.0'
+}
+
+bukkit {
+    main = "me.kyllian.paynowgui.bukkit.PayNowGUIPlugin"
+    name = "paynow-gui"
+    apiVersion = "1.21.8"
+    authors = ["Kyllian"]
+    description = "Unofficial Spigot plugin for the PayNow API"
+
+    softDepend = ["Apollo-Bukkit", "Citizens"]
+
+    commands {
+        buy {
+            usage = "/<command>"
+        }
+    }
+}
+
+shadowJar {
+    archiveBaseName.set('paynow-gui-bukkit')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+
+    dependencies {
+        include(project(':core'))
+        include(dependency('gg.paynow:java-sdk:.*'))
+        include(dependency('io.gsonfire:gson-fire:.*'))
+        include(dependency('org.bstats:.*'))
+        include(dependency('com.squareup.okhttp3:.*'))
+        include(dependency('com.squareup.okio:.*'))
+        include(dependency('org.jetbrains.kotlin:kotlin-stdlib:.*'))
+        include(dependency('org.yaml:snakeyaml:.*'))
+    }
+
+    relocate 'gg.paynow', 'me.kyllian.shaded.paynow'
+    relocate 'org.bstats', 'me.kyllian.shaded.bstats'
+    relocate 'okhttp3', 'me.kyllian.shaded.okhttp3'
+    relocate 'okio', 'me.kyllian.shaded.okio'
+
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/LICENSE*'
+    exclude 'META-INF/NOTICE*'
+    exclude 'META-INF/maven/**'
+    exclude '**/*.kotlin_metadata'
+    exclude '**/*.kotlin_builtins'
+
+    if (System.getenv('TEST_SERVER') != null) {
+        destinationDirectory.set(file("${System.getenv('TEST_SERVER')}/plugins"))
+    }
+}
+
+task uploadJar(type: Exec) {
+    dependsOn shadowJar
+    description = 'Uploads shaded jar to remote server via SSH using scp.'
+    def remoteServer = System.getenv('TEST_HOST')
+    def remoteDir = System.getenv('PP_REMOTE_DIR')
+    doFirst {
+        commandLine 'scp', "${shadowJar.archiveFile.get().asFile.absolutePath}", "${remoteServer}:${remoteDir}"
+    }
+}
+
+tasks.named('jar') {
+    enabled = false
+}

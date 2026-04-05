@@ -1,0 +1,14 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    api 'gg.paynow:java-sdk:1.0.60'
+    implementation 'com.squareup.okhttp3:okhttp:5.2.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.2.1'
+}

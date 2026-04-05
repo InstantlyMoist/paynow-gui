@@ -1,0 +1,45 @@
+package me.kyllian.paynowgui.bukkit.executors;
+
+import me.kyllian.paynowgui.bukkit.PayNowGUIPlugin;
+import me.kyllian.paynowgui.bukkit.gui.TagsGUI;
+import me.kyllian.paynowgui.bukkit.platform.BukkitPlayer;
+import me.kyllian.paynowgui.core.models.GUIPayload;
+import me.kyllian.paynowgui.core.utils.Statistics;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class BuyExecutor implements CommandExecutor {
+
+    private final PayNowGUIPlugin plugin;
+
+    public BuyExecutor(PayNowGUIPlugin plugin) {
+        this.plugin = plugin;
+
+        plugin.getCommand("buy").setExecutor(this);
+    }
+
+    @Override
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
+        if (args.length != 0) {
+            if (args[0].equalsIgnoreCase("reload") && commandSender.hasPermission("paynowgui.reload")) {
+                plugin.reloadConfig();
+                plugin.initApolloHook();
+                plugin.getProductHandler().reload();
+                plugin.getProductHandler().loadProducts();
+                commandSender.sendMessage(ChatColor.GREEN + "paynow-gui configuration reloaded!");
+                return true;
+            }
+        }
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(ChatColor.RED + "You need to be a player to execute this command!");
+            return true;
+        }
+
+        Statistics.menuOpened.getAndIncrement();
+        player.openInventory(new TagsGUI(plugin, player, new GUIPayload()).getInventory());
+        return true;
+    }
+}
