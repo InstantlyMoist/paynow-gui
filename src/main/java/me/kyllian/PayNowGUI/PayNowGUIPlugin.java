@@ -11,6 +11,7 @@ import me.kyllian.PayNowGUI.hooks.npc.CitizensNpcHook;
 import me.kyllian.PayNowGUI.hooks.npc.INpcHook;
 import me.kyllian.PayNowGUI.hooks.npc.NoopNpcHook;
 import me.kyllian.PayNowGUI.listeners.PlayerLoginListener;
+import me.kyllian.PayNowGUI.utils.SchedulerCompat;
 import me.kyllian.PayNowGUI.utils.Statistics;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
@@ -42,6 +43,17 @@ public class PayNowGUIPlugin extends JavaPlugin {
         initApolloHook();
         initNpcHook();
         initMetrics();
+
+        if (SchedulerCompat.isFoliaSupportedRuntime()) {
+            Bukkit.getLogger().info("[paynow-gui] Folia scheduler support is active.");
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        if (recentDonatorHandler != null) {
+            recentDonatorHandler.stop();
+        }
     }
 
     private void initExecutors() {

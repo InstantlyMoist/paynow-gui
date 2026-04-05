@@ -1,5 +1,5 @@
 # PayNow GUI
-A simple GUI for spigot servers, using [paynow-gg-java-sdk](https://github.com/InstantlyMoist/paynow-gg-java-sdk).
+A simple GUI for Spigot, Paper, and Folia servers, using [paynow-gg-java-sdk](https://github.com/InstantlyMoist/paynow-gg-java-sdk).
 
 ## To-do list
 - [x] Implement Lunar Checkout

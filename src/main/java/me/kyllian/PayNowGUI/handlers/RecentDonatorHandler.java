@@ -8,7 +8,7 @@ import gg.paynow.sdk.storefront.model.ModuleDto;
 import me.kyllian.PayNowGUI.PayNowGUIPlugin;
 import me.kyllian.PayNowGUI.hooks.npc.INpcHook;
 import me.kyllian.PayNowGUI.models.RecentOrder;
-import org.bukkit.Bukkit;
+import me.kyllian.PayNowGUI.utils.SchedulerCompat;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class RecentDonatorHandler {
     private final PayNowGUIPlugin plugin;
     private final INpcHook npcHook;
     private final Gson gson = new Gson();
-    private int taskId = -1;
+    private SchedulerCompat.CancellableTask task;
 
     public RecentDonatorHandler(PayNowGUIPlugin plugin, INpcHook npcHook) {
         this.plugin = plugin;
@@ -35,7 +35,13 @@ public class RecentDonatorHandler {
         if (config == null || !config.getBoolean("enabled", false)) return;
 
         long intervalTicks = config.getInt("update_every", 60) * 20L;
-        taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::fetchAndUpdate, 0L, intervalTicks).getTaskId();
+        task = SchedulerCompat.runAsyncTimer(plugin, this::fetchAndUpdate, 0L, intervalTicks);
+    }
+
+    public void stop() {
+        if (task == null) return;
+        task.cancel();
+        task = null;
     }
 
     private void fetchAndUpdate() {
@@ -97,7 +103,7 @@ public class RecentDonatorHandler {
                 }
 
                 // Update the NPC on the main thread (Citizens requires main thread access)
-                Bukkit.getScheduler().runTask(plugin, () -> npcHook.updateNpc(npcId, customerName, hologramLines));
+                SchedulerCompat.runGlobal(plugin, () -> npcHook.updateNpc(npcId, customerName, hologramLines));
                 return;
             }
         } catch (Exception e) {

@@ -9,6 +9,7 @@ import gg.paynow.sdk.storefront.model.*;
 import lombok.Getter;
 import me.kyllian.PayNowGUI.PayNowGUIPlugin;
 import me.kyllian.PayNowGUI.models.GUIProduct;
+import me.kyllian.PayNowGUI.utils.SchedulerCompat;
 import me.kyllian.PayNowGUI.utils.Statistics;
 import me.kyllian.PayNowGUI.utils.YMLFile;
 import org.bukkit.Bukkit;
@@ -20,7 +21,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static me.kyllian.PayNowGUI.utils.StringUtils.colorize;
-import static org.bukkit.Bukkit.getScheduler;
 
 @Getter
 public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
@@ -85,7 +85,7 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
     }
 
     private void runAsync(Runnable task) {
-        getScheduler().runTaskAsynchronously(getPlugin(), task);
+        SchedulerCompat.runAsync(getPlugin(), task);
     }
 
     private <T> void withAuth(Player player, ThrowingFunction<PayNowClient, T> task, Consumer<T> onSuccess) {
@@ -97,7 +97,7 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
             try {
                 PayNowClient authClient = PayNowClient.forStorefrontWithAuth(storeId, "customer " + customerTokens.get(player.getUniqueId()));
                 T result = task.apply(authClient);
-                consumeOnMain(onSuccess, result);
+                consumeOnPlayer(player, onSuccess, result);
             } catch (Exception e) {
                 error(player);
                 if (debug) e.printStackTrace();
@@ -112,7 +112,7 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
     }
 
     public void authenticate(Player player, Consumer<String> successCallback) {
-        getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+        SchedulerCompat.runAsync(getPlugin(), () -> {
             CustomerApi customerApi = client.getStorefrontApi(CustomerApi.class);
             try {
                 AuthenticateStorefrontCustomerResponseDto response = customerApi.authenticateStorefrontCustomer(storeId, null, "en-US",
@@ -121,7 +121,7 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
                                 .id(player.getName())
                 );
                 customerTokens.put(player.getUniqueId(), response.getCustomerToken());
-                consumeOnMain(successCallback, response.getCustomerToken());
+                consumeOnPlayer(player, successCallback, response.getCustomerToken());
             } catch (Exception e) {
                 error(player);
                 if (debug) e.printStackTrace();
@@ -166,14 +166,14 @@ public class ProductHandler extends YMLFile<PayNowGUIPlugin> {
         return player != null && customerTokens.containsKey(player.getUniqueId());
     }
 
-    private <T> void consumeOnMain(Consumer<T> consumer, T param) {
+    private <T> void consumeOnPlayer(Player player, Consumer<T> consumer, T param) {
         if (consumer == null) return;
-        getScheduler().runTask(getPlugin(), () -> consumer.accept(param));
+        SchedulerCompat.runForPlayer(getPlugin(), player, () -> consumer.accept(param));
     }
 
     private void error(Player player) {
         if (player == null || !player.isOnline()) return;
-        getScheduler().runTask(getPlugin(), () -> {
+        SchedulerCompat.runForPlayer(getPlugin(), player, () -> {
             player.closeInventory();
             player.sendMessage(colorize(getPlugin().getConfig().getString("messages.error")));
         });

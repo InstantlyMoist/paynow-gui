@@ -8,6 +8,7 @@ import me.kyllian.PayNowGUI.models.GUIPayload;
 import me.kyllian.PayNowGUI.models.GUIProduct;
 import me.kyllian.PayNowGUI.utils.BasicInventory;
 import me.kyllian.PayNowGUI.utils.ItemBuilder;
+import me.kyllian.PayNowGUI.utils.SchedulerCompat;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -16,8 +17,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static org.bukkit.Bukkit.getScheduler;
 
 public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
 
@@ -126,6 +125,6 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
     @Override
     public void onClose(InventoryCloseEvent event) {
         if (loading) return; // Redraw of the GUI
-        getScheduler().runTaskLater(plugin, () -> player.openInventory(new TagsGUI(plugin, player, payload).getInventory()), 1L);
+        SchedulerCompat.runLaterForPlayer(plugin, player, 1L, () -> player.openInventory(new TagsGUI(plugin, player, payload).getInventory()));
     }
 }
