@@ -26,6 +26,9 @@ dependencies {
     compileOnly('org.spigotmc:spigot-api:1.21.8-R0.1-SNAPSHOT')
     compileOnly 'com.lunarclient:apollo-api:1.2.4'
     compileOnly 'com.lunarclient:apollo-extra-adventure4:1.2.4'
+
+    // NPC stuff
+    compileOnly 'net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT'
     compileOnly 'net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT'
 
     implementation 'org.bstats:bstats-bukkit:3.1.0'
