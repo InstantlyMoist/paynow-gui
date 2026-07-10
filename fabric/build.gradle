@@ -19,6 +19,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven { url = 'https://maven.fabricmc.net/' }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -74,7 +75,7 @@ configurations {
 
 dependencies {
     shadow project(':core')
-    shadow 'gg.paynow:java-sdk:1.0.60'
+    shadow 'gg.paynow:java-sdk:1.0.70'
     shadow 'com.squareup.okhttp3:okhttp:5.2.1'
     shadow 'com.squareup.okhttp3:logging-interceptor:5.2.1'
 }
