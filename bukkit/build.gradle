@@ -18,6 +18,14 @@ repositories {
         name = 'citizens'
         url = 'https://repo.citizensnpcs.co/'
     }
+    maven {
+        name = 'pvphub'
+        url = 'https://maven.pvphub.me/tofaa'
+    }
+    maven {
+        name = 'codemc'
+        url = 'https://repo.codemc.io/repository/maven-releases/'
+    }
 }
 
 dependencies {
@@ -29,7 +37,14 @@ dependencies {
 
     // NPC stuff
     compileOnly 'net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT'
-    compileOnly 'net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT'
+
+    // SpaceNPC (part of EntityLib) - pinned to a fixed snapshot build
+    compileOnly 'io.github.tofaa2:spaceNPC:3.3.6-20260721.155727-1'
+    compileOnly 'io.github.tofaa2:api:3.3.6-20260721.155727-1'
+    compileOnly 'com.github.retrooper:packetevents-api:2.13.0'
+    compileOnly 'net.kyori:adventure-api:4.25.0'
+    compileOnly 'net.kyori:adventure-text-minimessage:4.25.0'
+    compileOnly 'net.kyori:adventure-text-serializer-legacy:4.25.0'
 
     implementation 'org.bstats:bstats-bukkit:3.1.0'
 }
@@ -37,11 +52,11 @@ dependencies {
 bukkit {
     main = "me.kyllian.paynowgui.bukkit.PayNowGUIPlugin"
     name = "paynow-gui"
-    apiVersion = "1.21.8"
+    apiVersion = "1.21.1"
     authors = ["Kyllian"]
     description = "Unofficial Spigot plugin for the PayNow API"
 
-    softDepend = ["Apollo-Bukkit", "Citizens"]
+    softDepend = ["Apollo-Bukkit", "Citizens", "SpaceNPC"]
 
     commands {
         buy {
@@ -81,9 +96,7 @@ shadowJar {
     exclude '**/*.kotlin_metadata'
     exclude '**/*.kotlin_builtins'
 
-    if (System.getenv('TEST_SERVER') != null) {
-        destinationDirectory.set(file("${System.getenv('TEST_SERVER')}/plugins"))
-    }
+    destinationDirectory.set(file("${System.getenv('TEST_SERVER')}/plugins"))
 }
 
 task uploadJar(type: Exec) {

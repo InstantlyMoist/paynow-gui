@@ -14,7 +14,8 @@ recent_donator_npc:
     &e&l%name% &7(&a&l%total%&7)
   package_format: "&8- &7%name% &d&l%amount%"
   update_every: 60 # Seconds
-  npc_id: 99 # ID of the NPC
+  npc_id: 99 # ID of the NPC (Citizens: numeric id, SpaceNPC: the NPC's id)
+  hologram_height: 1.0 # SpaceNPC only: height above the NPC's feet of the lowest hologram line, rounded to whole line heights
 
 tags_gui:
   title: "my.store.net"

@@ -6,6 +6,7 @@ import me.kyllian.paynowgui.bukkit.hooks.apollo.ApolloHook;
 import me.kyllian.paynowgui.bukkit.hooks.apollo.IApolloHook;
 import me.kyllian.paynowgui.bukkit.hooks.apollo.NoopApolloHook;
 import me.kyllian.paynowgui.bukkit.hooks.npc.CitizensNpcHook;
+import me.kyllian.paynowgui.bukkit.hooks.npc.SpaceNpcHook;
 import me.kyllian.paynowgui.bukkit.listeners.PlayerLoginListener;
 import me.kyllian.paynowgui.bukkit.platform.BukkitPlatform;
 import me.kyllian.paynowgui.core.handlers.ProductHandler;
@@ -72,11 +73,17 @@ public class PayNowGUIPlugin extends JavaPlugin {
     }
 
     public void initNpcHook() {
-        if (getServer().getPluginManager().getPlugin("Citizens") != null && getConfig().getBoolean("recent_donator_npc.enabled")) {
+        if (!getConfig().getBoolean("recent_donator_npc.enabled")) {
+            Bukkit.getLogger().info("[paynow-gui] recent_donator_npc disabled!");
+            npcHook = new NoopNpcHook();
+        } else if (getServer().getPluginManager().getPlugin("Citizens") != null) {
             Bukkit.getLogger().info("[paynow-gui] Enabling Citizens NPC hook!");
             npcHook = new CitizensNpcHook();
+        } else if (getServer().getPluginManager().getPlugin("SpaceNPC") != null) {
+            Bukkit.getLogger().info("[paynow-gui] Enabling SpaceNPC NPC hook!");
+            npcHook = new SpaceNpcHook(this);
         } else {
-            Bukkit.getLogger().info("[paynow-gui] Citizens not detected or recent_donator_npc disabled!");
+            Bukkit.getLogger().info("[paynow-gui] No supported NPC plugin (Citizens, SpaceNPC) detected!");
             npcHook = new NoopNpcHook();
         }
         recentDonatorHandler = new RecentDonatorHandler(platform, npcHook);
