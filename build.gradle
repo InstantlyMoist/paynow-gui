@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = 'me.kyllian'
-    version = '1.1.1'
+    version = '1.2.0'
 }
 
 // Configure non-Fabric subprojects (core, bukkit) with standard java setup
