@@ -89,13 +89,19 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
             if (getSection().get("tag_item.overrides." + tag.getId()) != null) {
                 String basePath = "tag_item.overrides." + tag.getId() + ".";
                 tagItem = new ItemBuilder(Material.valueOf(getSection().getString(basePath + "material")))
-                        .setName(getSection().getString(basePath + "name").replace("%tag%", tag.getName()))
+                        .setName(getSection().getString(basePath + "name")
+                                .replace("%tag%", tag.getName())
+                                .replace("%tag_upper%", tag.getName().toUpperCase())
+                        )
                         .setLore(getSection().getString(basePath + "lore"))
                         .setCustomModelData(getSection().getInt(basePath + "custom_model_data", 0))
                         .toItemStack();
             } else {
                 tagItem = new ItemBuilder(Material.valueOf(getSection().getString("tag_item.material")))
-                        .setName(getSection().getString("tag_item.name").replace("%tag%", tag.getName()))
+                        .setName(getSection().getString("tag_item.name")
+                                .replace("%tag%", tag.getName())
+                                .replace("%tag_upper%", tag.getName().toUpperCase())
+                        )
                         .setCustomModelData(getSection().getInt("tag_item.custom_model_data", 0))
                         .toItemStack();
             }
