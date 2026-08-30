@@ -5,6 +5,7 @@ import gg.paynow.sdk.storefront.model.StorefrontProductDto;
 import me.kyllian.paynowgui.bukkit.PayNowGUIPlugin;
 import me.kyllian.paynowgui.bukkit.platform.BukkitPlayer;
 import me.kyllian.paynowgui.bukkit.utils.BasicInventory;
+import me.kyllian.paynowgui.bukkit.utils.Compat;
 import me.kyllian.paynowgui.bukkit.utils.ItemBuilder;
 import me.kyllian.paynowgui.core.models.GUIPayload;
 import org.bukkit.Material;
@@ -38,7 +39,7 @@ public class SelectServerGUI extends BasicInventory<PayNowGUIPlugin> {
             ConfigurationSection itemSection = getSection().getConfigurationSection("items." + server.getId());
             if (itemSection == null) return;
 
-            ItemStack serverItem = new ItemBuilder(Material.valueOf(itemSection.getString("material")))
+            ItemStack serverItem = new ItemBuilder(Compat.material(itemSection.getString("material")))
                     .setName(itemSection.getString("name"))
                     .setLore(itemSection.getString("lore"))
                     .toItemStack();

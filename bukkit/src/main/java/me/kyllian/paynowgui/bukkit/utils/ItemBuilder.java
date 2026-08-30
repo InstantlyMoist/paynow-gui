@@ -53,7 +53,8 @@ public class ItemBuilder {
     public ItemBuilder setCustomModelData(int data) {
         if (data == 0) return this;
         ItemMeta im = this.itemStack.getItemMeta();
-        im.setCustomModelData(data);
+        // Only exists from 1.14; silently ignored on older servers.
+        Compat.setCustomModelData(im, data);
         this.itemStack.setItemMeta(im);
         return this;
     }
@@ -103,7 +104,9 @@ public class ItemBuilder {
     public ItemBuilder setEnchanted(boolean enchanted) {
         if (!enchanted) return this;
         ItemMeta im = this.itemStack.getItemMeta();
-        im.addEnchant(Enchantment.UNBREAKING, 1, true);
+        Enchantment glint = Compat.glintEnchantment();
+        if (glint == null) return this;
+        im.addEnchant(glint, 1, true);
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         this.itemStack.setItemMeta(im);
         return this;

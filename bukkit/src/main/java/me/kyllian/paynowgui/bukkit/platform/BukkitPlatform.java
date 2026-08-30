@@ -65,6 +65,16 @@ public class BukkitPlatform implements PayNowPlatform {
     }
 
     @Override
+    public long getConfigLong(String path, long defaultValue) {
+        return plugin.getConfig().getLong(path, defaultValue);
+    }
+
+    @Override
+    public List<String> getConfigStringList(String path) {
+        return plugin.getConfig().getStringList(path);
+    }
+
+    @Override
     public List<Integer> getConfigIntList(String path) {
         return plugin.getConfig().getIntegerList(path);
     }

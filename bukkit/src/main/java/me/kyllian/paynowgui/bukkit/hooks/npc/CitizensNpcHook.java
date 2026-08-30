@@ -28,7 +28,9 @@ public class CitizensNpcHook implements INpcHook {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.clear();
         hologramTrait.setLineHeight(0.3);
-        for (String line : hologramLines.reversed()) {
+        java.util.List<String> reversedLines = new java.util.ArrayList<>(hologramLines);
+        java.util.Collections.reverse(reversedLines);
+        for (String line : reversedLines) {
             hologramTrait.addLine(line);
         }
     }

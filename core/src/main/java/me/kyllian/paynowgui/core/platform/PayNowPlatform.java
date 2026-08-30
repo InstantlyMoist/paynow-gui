@@ -31,6 +31,13 @@ public interface PayNowPlatform {
 
     int getConfigInt(String path, int defaultValue);
 
+    long getConfigLong(String path, long defaultValue);
+
+    /**
+     * Get a list of strings at the given path, or an empty list if absent.
+     */
+    List<String> getConfigStringList(String path);
+
     List<Integer> getConfigIntList(String path);
 
     /**

@@ -100,7 +100,8 @@ public class SpaceNpcHook implements INpcHook {
      * only rewrites the anchor and the layout is derived from it.
      */
     private List<Component> raise(NPC npc, Hologram hologram, List<Component> lines) {
-        if (!(hologram instanceof Hologram.Legacy legacy)) return lines;
+        if (!(hologram instanceof Hologram.Legacy)) return lines;
+        Hologram.Legacy legacy = (Hologram.Legacy) hologram;
 
         float spacing = Math.abs(legacy.getLineOffset());
         if (spacing <= 0) return lines;
@@ -149,7 +150,7 @@ public class SpaceNpcHook implements INpcHook {
             try {
                 List<TextureProperty> textures = SpaceNPC.getInstance().getSkinFetcher().getSkin(skinName);
                 if (textures.isEmpty()) return;
-                texture = textures.getFirst();
+                texture = textures.get(0);
             } catch (Exception e) {
                 plugin.getLogger().log(Level.WARNING, "[paynow-gui] Failed to fetch skin for " + skinName, e);
                 return;

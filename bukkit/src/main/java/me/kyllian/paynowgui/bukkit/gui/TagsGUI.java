@@ -5,6 +5,7 @@ import gg.paynow.sdk.storefront.model.StorefrontProductDto;
 import me.kyllian.paynowgui.bukkit.PayNowGUIPlugin;
 import me.kyllian.paynowgui.bukkit.platform.BukkitPlayer;
 import me.kyllian.paynowgui.bukkit.utils.BasicInventory;
+import me.kyllian.paynowgui.bukkit.utils.Compat;
 import me.kyllian.paynowgui.bukkit.utils.ItemBuilder;
 import me.kyllian.paynowgui.core.models.GUIPayload;
 import me.kyllian.paynowgui.core.utils.Statistics;
@@ -51,7 +52,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                         filtered = products.stream()
                                 .filter(p -> p.getGameservers().stream()
                                         .anyMatch(s -> s.getId().equalsIgnoreCase(String.valueOf(serverIdentifier))))
-                                .toList();
+                                .collect(java.util.stream.Collectors.toList());
                     }
 
                     this.payload.getAllProducts().addAll(filtered);
@@ -88,7 +89,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
             ItemStack tagItem;
             if (getSection().get("tag_item.overrides." + tag.getId()) != null) {
                 String basePath = "tag_item.overrides." + tag.getId() + ".";
-                tagItem = new ItemBuilder(Material.valueOf(getSection().getString(basePath + "material")))
+                tagItem = new ItemBuilder(Compat.material(getSection().getString(basePath + "material")))
                         .setName(getSection().getString(basePath + "name")
                                 .replace("%tag%", tag.getName())
                                 .replace("%tag_upper%", tag.getName().toUpperCase())
@@ -97,7 +98,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                         .setCustomModelData(getSection().getInt(basePath + "custom_model_data", 0))
                         .toItemStack();
             } else {
-                tagItem = new ItemBuilder(Material.valueOf(getSection().getString("tag_item.material")))
+                tagItem = new ItemBuilder(Compat.material(getSection().getString("tag_item.material")))
                         .setName(getSection().getString("tag_item.name")
                                 .replace("%tag%", tag.getName())
                                 .replace("%tag_upper%", tag.getName().toUpperCase())
@@ -120,7 +121,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
         int slot = getSection().getInt("checkout_item.slot");
 
         if (payload.getCart() == null) {
-            ItemStack loadingItem = new ItemBuilder(Material.valueOf(getSection().getString("checkout_item.loading.material")))
+            ItemStack loadingItem = new ItemBuilder(Compat.material(getSection().getString("checkout_item.loading.material")))
                     .setName(getSection().getString("checkout_item.loading.name"))
                     .setLore(getSection().getString("checkout_item.loading.lore"))
                     .setCustomModelData(getSection().getInt("checkout_item.loading.custom_model_data", 0))
@@ -128,7 +129,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
 
             addItem(slot, loadingItem);
         } else if (payload.getCart().getLines().isEmpty()) {
-            ItemStack emptyCartItem = new ItemBuilder(Material.valueOf(getSection().getString("checkout_item.empty.material")))
+            ItemStack emptyCartItem = new ItemBuilder(Compat.material(getSection().getString("checkout_item.empty.material")))
                     .setName(getSection().getString("checkout_item.empty.name"))
                     .setLore(getSection().getString("checkout_item.empty.lore"))
                     .setCustomModelData(getSection().getInt("checkout_item.empty.custom_model_data", 0))
@@ -149,7 +150,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
             String items = itemsBuilder.toString().trim();
 
             String basePath = isLunar ? "checkout_item.filled_lunar." : "checkout_item.filled.";
-            ItemStack filledCartItem = new ItemBuilder(Material.valueOf(getSection().getString(basePath + "material")))
+            ItemStack filledCartItem = new ItemBuilder(Compat.material(getSection().getString(basePath + "material")))
                     .setName(getSection().getString(basePath + "name"))
                     .setCustomModelData(getSection().getInt(basePath + "custom_model_data", 0))
                     .setLore(getSection().getString(basePath + "lore")
@@ -194,7 +195,7 @@ public class TagsGUI extends BasicInventory<PayNowGUIPlugin> {
                 });
             });
 
-            ItemStack clearCartItem = new ItemBuilder(Material.valueOf(getSection().getString("clear_cart_item.material")))
+            ItemStack clearCartItem = new ItemBuilder(Compat.material(getSection().getString("clear_cart_item.material")))
                     .setName(getSection().getString("clear_cart_item.name"))
                     .setLore(getSection().getString("clear_cart_item.lore"))
                     .setCustomModelData(getSection().getInt("clear_cart_item.custom_model_data", 0))

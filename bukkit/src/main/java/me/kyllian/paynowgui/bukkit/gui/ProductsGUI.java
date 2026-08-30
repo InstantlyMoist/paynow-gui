@@ -6,6 +6,7 @@ import gg.paynow.sdk.storefront.model.StorefrontProductDto;
 import me.kyllian.paynowgui.bukkit.PayNowGUIPlugin;
 import me.kyllian.paynowgui.bukkit.platform.BukkitPlayer;
 import me.kyllian.paynowgui.bukkit.utils.BasicInventory;
+import me.kyllian.paynowgui.bukkit.utils.Compat;
 import me.kyllian.paynowgui.bukkit.utils.ItemBuilder;
 import me.kyllian.paynowgui.core.models.GUIPayload;
 import me.kyllian.paynowgui.core.models.GUIProduct;
@@ -40,7 +41,7 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
 
         this.products.addAll(payload.getAllProducts().stream()
                 .filter(p -> p.getTags().stream()
-                        .anyMatch(t -> t.getId().equals(tag.getId()))).toList());
+                        .anyMatch(t -> t.getId().equals(tag.getId()))).collect(java.util.stream.Collectors.toList()));
     }
 
     @Override
@@ -57,7 +58,7 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
 
     @Override
     public List<Integer> getBackSlots() {
-        return List.of(inventory.getSize() - 5);
+        return java.util.Collections.singletonList(inventory.getSize() - 5);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class ProductsGUI extends BasicInventory<PayNowGUIPlugin> {
             boolean fullFilled = productInCart != null && product.getStock() != null && product.getStock().getCustomerAvailable() != -1 && productInCart.getQuantity() >= product.getStock().getCustomerAvailable();
             int inCart = productInCart != null ? productInCart.getQuantity() : 0;
 
-            Material material = fullFilled ? Material.valueOf(getSection().getString("item.material_max_quantity")) : Material.valueOf(guiProduct.getMaterial());
+            Material material = fullFilled ? Compat.material(getSection().getString("item.material_max_quantity")) : Compat.material(guiProduct.getMaterial());
 
             ItemStack productItem = new ItemBuilder(material, Math.max(1, Math.min(inCart, material.getMaxStackSize())))
                     .setName(guiProduct.getDisplayName())

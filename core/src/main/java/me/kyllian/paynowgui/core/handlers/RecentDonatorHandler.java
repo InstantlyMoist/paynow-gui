@@ -48,7 +48,7 @@ public class RecentDonatorHandler {
                 List<OrderDto> orders = module.getData().getOrders();
                 if (orders == null || orders.isEmpty()) return;
 
-                OrderDto mostRecent = orders.getFirst();
+                OrderDto mostRecent = orders.get(0);
                 String customerName = mostRecent.getCustomer() != null && mostRecent.getCustomer().getName() != null
                         ? mostRecent.getCustomer().getName()
                         : "Unknown";

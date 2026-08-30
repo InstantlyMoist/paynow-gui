@@ -33,10 +33,11 @@ public class BuyExecutor implements CommandExecutor {
                 return true;
             }
         }
-        if (!(commandSender instanceof Player player)) {
+        if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(ChatColor.RED + "You need to be a player to execute this command!");
             return true;
         }
+        Player player = (Player) commandSender;
 
         Statistics.menuOpened.getAndIncrement();
         player.openInventory(new TagsGUI(plugin, player, new GUIPayload()).getInventory());

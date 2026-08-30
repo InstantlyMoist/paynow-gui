@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "Server-side store GUI for PayNow, allowing players to browse and purchase products in-game.",
+  "authors": ["Kyllian"],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "environment": "server",
+  "entrypoints": {
+    "server": ["me.kyllian.paynowgui.loader.PayNowLoaderMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api": "*",
+    "minecraft": "${mod_mc_compat}"
+  }
+}

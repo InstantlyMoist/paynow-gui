@@ -59,7 +59,7 @@ public class YMLFile {
     }
 
     public void save() {
-        try (var writer = Files.newBufferedWriter(file.toPath())) {
+        try (java.io.BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
             yaml.dump(data, writer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,7 +84,7 @@ public class YMLFile {
             }
             return result;
         }
-        return List.of();
+        return java.util.Collections.emptyList();
     }
 
     public int getInt(String path) {
@@ -94,6 +94,16 @@ public class YMLFile {
     public int getInt(String path, int defaultValue) {
         Object value = get(path);
         if (value instanceof Number) return ((Number) value).intValue();
+        return defaultValue;
+    }
+
+    public long getLong(String path) {
+        return getLong(path, 0L);
+    }
+
+    public long getLong(String path, long defaultValue) {
+        Object value = get(path);
+        if (value instanceof Number) return ((Number) value).longValue();
         return defaultValue;
     }
 
@@ -147,6 +157,6 @@ public class YMLFile {
         if (value instanceof Map) {
             return ((Map<String, Object>) value).keySet();
         }
-        return Set.of();
+        return java.util.Collections.emptySet();
     }
 }

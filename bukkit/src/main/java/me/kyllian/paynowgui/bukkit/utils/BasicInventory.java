@@ -119,7 +119,7 @@ public abstract class BasicInventory<P extends JavaPlugin> implements Listener, 
             inventory = Bukkit.createInventory(this, InventoryType.valueOf(type), StringUtils.colorize(titlePlaceholders(section.getString("title"))));
 
         if (section.contains("back_item")) {
-            ItemStack backItem = new ItemBuilder(Material.valueOf(section.getString("back_item.material")))
+            ItemStack backItem = new ItemBuilder(Compat.material(section.getString("back_item.material")))
                     .setName(section.getString("back_item.name"))
                     .toItemStack();
 
@@ -135,7 +135,7 @@ public abstract class BasicInventory<P extends JavaPlugin> implements Listener, 
     }
 
     public List<Integer> getSlots(String slots) {
-        List<String> slotList = List.of(slots.split(","));
+        List<String> slotList = java.util.Arrays.asList(slots.split(","));
         List<Integer> finalSlots = new ArrayList<>();
         for (String slot : slotList) {
             if (slot.contains("-")) {
@@ -153,14 +153,14 @@ public abstract class BasicInventory<P extends JavaPlugin> implements Listener, 
     }
 
     public void nextPage() {
-        ItemStack nextPageItem = new ItemBuilder(Material.valueOf(section.getString("next_item.item")))
+        ItemStack nextPageItem = new ItemBuilder(Compat.material(section.getString("next_item.item")))
                 .setName(section.getString("next_item.name")).toItemStack();
 
         addItem(section.getInt("next_item.slot"), nextPageItem, (event) -> onNextPage((Player) event.getWhoClicked()));
     }
 
     public void previousPage() {
-        ItemStack previousPageItem = new ItemBuilder(Material.valueOf(section.getString("previous_item.item")))
+        ItemStack previousPageItem = new ItemBuilder(Compat.material(section.getString("previous_item.item")))
                 .setName(section.getString("previous_item.name")).toItemStack();
 
         addItem(section.getInt("previous_item.slot"), previousPageItem, (event) -> onPreviousPage((Player) event.getWhoClicked()));
