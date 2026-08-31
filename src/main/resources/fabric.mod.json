@@ -6,7 +6,7 @@
   "description": "Server-side store GUI for PayNow, allowing players to browse and purchase products in-game.",
   "authors": ["Kyllian"],
   "contact": {},
-  "license": "All-Rights-Reserved",
+  "license": "GPL-3.0-only",
   "environment": "server",
   "entrypoints": {
     "server": ["me.kyllian.paynowgui.loader.PayNowLoaderMod"]

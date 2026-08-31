@@ -53,6 +53,14 @@ In the product view: **left-click** adds one, **right-click** removes one,
 See [BUILDING.md](BUILDING.md). Note that the PayNow SDK is not published publicly and
 must be built locally first.
 
+## License
+
+Licensed under the [GNU General Public License v3.0](LICENSE).
+
+You may use, modify and redistribute this plugin freely. If you distribute a modified
+version, you must also make its source available under the GPL — closed-source forks are
+not permitted.
+
 ## Support
 
 Join the [Discord](https://kyllian.nl/discord).

@@ -102,6 +102,12 @@ Switch versions with `./gradlew "Set active project to 26.2-fabric"`.
 | `ClickType` → `ContainerInput`, int perms → `PermissionSet` | 26.1 |
 | Java 21 → Java 25 | 26.1 |
 
+## Licensing
+
+The project is GPL-3.0-only. `LICENSE` is packaged into every produced jar, and both mod
+manifests declare the SPDX id. All bundled third-party code (okhttp, okio, snakeyaml,
+gson-fire, bStats) is MIT or Apache-2.0 and therefore GPL-compatible.
+
 ## Optional Bukkit dependencies
 
 Citizens and SpaceNPC are `compileOnly` NPC backends. Citizens moved to

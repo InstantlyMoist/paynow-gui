@@ -69,6 +69,7 @@ bukkit {
 }
 
 tasks.shadowJar {
+    from(rootProject.file("LICENSE"))
     archiveBaseName = "paynow-gui-bukkit"
     archiveClassifier = ""
     archiveVersion = ""

@@ -67,9 +67,11 @@ tasks.processResources {
 }
 
 tasks.jar {
+    from(rootProject.file("LICENSE"))
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(provider {
-        bundle.resolve()
+    // Configuration.elements carries task dependencies, so :core:jar is built first.
+    from(bundle.elements.map { locations ->
+        locations.map { it.asFile }
             .filter { f -> bundleAllow.any { f.name.startsWith(it) } }
             .map { if (it.isDirectory) it else zipTree(it) }
     }) {
