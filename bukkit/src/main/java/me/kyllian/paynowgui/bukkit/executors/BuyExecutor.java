@@ -29,12 +29,12 @@ public class BuyExecutor implements CommandExecutor {
                 plugin.initApolloHook();
                 plugin.getProductHandler().reload();
                 plugin.getProductHandler().loadProducts();
-                commandSender.sendMessage(ChatColor.GREEN + "paynow-gui configuration reloaded!");
+                commandSender.sendMessage(ChatColor.LIGHT_PURPLE + "paynow-gui configuration reloaded!");
                 return true;
             }
         }
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(ChatColor.RED + "You need to be a player to execute this command!");
+            commandSender.sendMessage(ChatColor.GRAY + "You need to be a player to execute this command!");
             return true;
         }
         Player player = (Player) commandSender;
